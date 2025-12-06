@@ -48,24 +48,25 @@ export class RestaurantController {
     }
 
     static async getOpenClose(req: Request, res: Response, next: NextFunction) {
-        try {
-            const status = req.query.status as string | undefined;
-            if(status === undefined) {
-                throw new ResponseError(
-                    400, "Status should be opened/closed"
-                );
-            }
-            
-            const response = {
-                data: []
-            }
-            res.status(200).json({
-                data: response
-            })
-        } catch (error) {
-            next(error)
+    try {
+        let status: string | undefined;
+        if (req.path.endsWith("/opened")) status = "opened";
+        else if (req.path.endsWith("/closed")) status = "closed";
+
+        if (status && status !== 'opened' && status !== 'closed') {
+            throw new ResponseError(
+                400, "Status should be opened/closed"
+            );
         }
+
+        const response = await RestaurantService.getAllRestaurant(status);
+        res.status(200).json({
+            data: response
+        });
+    } catch (error) {
+        next(error);
     }
+}
 
     static async delete(req: Request, res: Response, next: NextFunction) {
         try {

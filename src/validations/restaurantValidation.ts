@@ -20,5 +20,6 @@ export class RestaurantValidation {
             .boolean({
                 error: "Title must be open/close!",
             })
+            .optional(),
     })
 }
